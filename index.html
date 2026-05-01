@@ -1,3 +1,1363 @@
-{
-	"folders": []
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sistema ATE — Plataforma Docente</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:       #0D1B3E;
+    --navy-mid:   #162251;
+    --indigo:     #2C4BAA;
+    --indigo-lt:  #3D5EC7;
+    --gold:       #D4920C;
+    --gold-lt:    #F5B82E;
+    --cream:      #F8F6F0;
+    --white:      #FFFFFF;
+    --surface:    #F2F4F9;
+    --border:     #D8DDE8;
+    --border-lt:  #E8ECF4;
+    --text-dark:  #0D1B3E;
+    --text-mid:   #3A4A6B;
+    --text-soft:  #6B7A9A;
+    --text-pale:  #9DAABF;
+    --red:        #C0392B;
+    --red-lt:     #FEF0EF;
+    --green:      #1A7A42;
+    --green-lt:   #EDFBF3;
+    --amber:      #9B6A00;
+    --amber-lt:   #FFF8E6;
+    --shadow-sm:  0 1px 4px rgba(13,27,62,.07);
+    --shadow-md:  0 4px 16px rgba(13,27,62,.10);
+    --shadow-lg:  0 8px 32px rgba(13,27,62,.13);
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 18px;
+    --r-xl: 24px;
+    --font: 'DM Sans', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+  }
+
+  html { font-size: 15px; }
+
+  body {
+    font-family: var(--font);
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR LAYOUT ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .sidebar-brand {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+  .brand-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .brand-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,.45);
+    letter-spacing: .03em;
+  }
+
+  .sidebar-nav { flex: 1; padding: 20px 12px; }
+
+  .nav-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.3);
+    padding: 0 12px;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+  .nav-label:first-child { margin-top: 0; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    color: rgba(255,255,255,.55);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all .18s;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+  .nav-item.active { background: rgba(255,255,255,.12); color: var(--white); }
+  .nav-item.active .nav-icon { background: var(--gold); color: var(--navy); }
+  .nav-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+    transition: all .18s;
+  }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .sidebar-footer p { font-size: 11px; color: rgba(255,255,255,.28); line-height: 1.5; }
+
+  /* MAIN CONTENT */
+  .main { flex: 1; overflow-y: auto; }
+
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border-lt);
+    padding: 0 36px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: var(--shadow-sm);
+  }
+  .topbar-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .topbar-sub { font-size: 12px; color: var(--text-soft); margin-top: 1px; }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-lt));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--white); font-weight: 600;
+  }
+
+  /* PAGE CONTENT */
+  .page { display: none; padding: 32px 36px; animation: fadeUp .25s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 28px; }
+  .page-header h2 { font-family: var(--font-serif); font-size: 26px; color: var(--navy); margin-bottom: 4px; }
+  .page-header p { font-size: 13.5px; color: var(--text-soft); }
+
+  /* CARDS */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border-lt);
+    border-radius: var(--r-lg);
+    padding: 28px 28px 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-lt);
+  }
+  .card-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--navy); }
+  .card-desc { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+
+  /* STEP INDICATOR */
+  .step-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 0;
+  }
+  .step-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    color: var(--text-pale);
+    background: var(--white);
+    transition: all .25s;
+    z-index: 2;
+  }
+  .step-circle.done  { background: var(--green-lt); border-color: var(--green); color: var(--green); }
+  .step-circle.curr  { background: var(--navy); border-color: var(--navy); color: var(--white); box-shadow: 0 0 0 4px rgba(13,27,62,.12); }
+  .step-label {
+    font-size: 10px; font-weight: 500; color: var(--text-pale);
+    white-space: nowrap;
+    transition: color .25s;
+  }
+  .step-label.done { color: var(--green); }
+  .step-label.curr { color: var(--navy); font-weight: 600; }
+  .step-connector { flex: 1; height: 2px; background: var(--border); margin-bottom: 18px; transition: background .25s; }
+  .step-connector.done { background: var(--green); }
+
+  /* FORM ELEMENTS */
+  .field-group { margin-bottom: 16px; }
+  .field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    letter-spacing: .02em;
+  }
+  .field-label .req { color: var(--red); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 13.5px;
+    color: var(--text-dark);
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 9px 13px;
+    transition: border-color .15s, box-shadow .15s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--indigo);
+    box-shadow: 0 0 0 3px rgba(44,75,170,.12);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7A9A' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* COMPETENCIA BLOCK */
+  .competencia-block {
+    background: var(--surface);
+    border: 1.5px solid var(--border-lt);
+    border-radius: var(--r-md);
+    padding: 16px;
+    margin-bottom: 10px;
+    transition: border-color .15s;
+  }
+  .competencia-block:hover { border-color: var(--border); }
+  .competencia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .competencia-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--indigo);
+  }
+
+  /* RÚBRICA */
+  .rubrica-wrapper { overflow-x: auto; border-radius: var(--r-sm); border: 1px solid var(--border-lt); }
+  .rubrica-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+  .rubrica-table th, .rubrica-table td { padding: 0; }
+  .rh {
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .rh-crit { background: var(--navy); color: var(--white); text-align: left; border-radius: 0; width: 130px; }
+  .rh-1 { background: #C0392B; color: #fff; }
+  .rh-2 { background: #D4920C; color: #fff; }
+  .rh-3 { background: #1A7A42; color: #fff; }
+  .rh-4 { background: var(--indigo); color: #fff; }
+
+  .rubrica-table td input,
+  .rubrica-table td textarea {
+    border: none;
+    border-radius: 0;
+    padding: 10px 11px;
+    font-size: 12.5px;
+    background: var(--white);
+    min-height: 72px;
+    box-shadow: none;
+  }
+  .rubrica-table td { border: 1px solid var(--border-lt); }
+  .rubrica-table td input { min-height: 52px; font-weight: 600; }
+  .rubrica-table td:first-child { background: var(--surface); }
+  .rubrica-table tr:hover td { background: #FAFBFF; }
+  .rubrica-table tr:hover td:first-child { background: var(--surface); }
+
+  /* SECUENCIA */
+  .secuencia-block {
+    background: var(--white);
+    border: 1.5px solid var(--border-lt);
+    border-radius: var(--r-md);
+    padding: 18px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .sec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .sec-num {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-dot {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sec-dot-label { font-size: 12px; font-weight: 600; color: var(--navy); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 20px;
+    border-radius: var(--r-sm);
+    border: none;
+    cursor: pointer;
+    transition: all .18s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--navy);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(13,27,62,.2);
+  }
+  .btn-primary:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,27,62,.25); }
+  .btn-secondary {
+    background: var(--white);
+    color: var(--text-mid);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--surface); border-color: var(--border); }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--navy);
+    box-shadow: 0 2px 8px rgba(212,146,12,.25);
+  }
+  .btn-gold:hover { background: var(--gold-lt); transform: translateY(-1px); }
+  .btn-danger {
+    background: var(--red-lt);
+    color: var(--red);
+    border: 1px solid #FACACA;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  .btn-danger:hover { background: #FDE8E8; }
+  .btn-add {
+    width: 100%;
+    background: transparent;
+    border: 2px dashed var(--border);
+    color: var(--indigo);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: all .18s;
+    margin-top: 10px;
+    font-family: var(--font);
+  }
+  .btn-add:hover { border-color: var(--indigo); background: rgba(44,75,170,.04); }
+
+  /* ACTIONS ROW */
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-lt);
+  }
+
+  /* TOAST */
+  .toast {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    animation: slideIn .25s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .toast.success { display: flex; background: var(--green-lt); color: var(--green); border: 1px solid #A3DDB9; }
+  .toast.warn    { display: flex; background: var(--amber-lt); color: var(--amber); border: 1px solid #F5D580; }
+
+  /* LIST ITEM */
+  .ate-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    border: 1.5px solid var(--border-lt);
+    border-radius: var(--r-md);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    transition: all .18s;
+    cursor: default;
+  }
+  .ate-item:hover { border-color: var(--border); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .ate-item-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--navy), var(--indigo-lt));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .ate-item-body { flex: 1; min-width: 0; }
+  .ate-item-name { font-size: 14.5px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .ate-item-meta { font-size: 12px; color: var(--text-soft); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .meta-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--surface); border: 1px solid var(--border-lt);
+    padding: 2px 8px; border-radius: 100px;
+    font-size: 11px; font-weight: 500; color: var(--text-mid);
+  }
+  .chip-blue { background: #EEF3FF; border-color: #C4D0F5; color: var(--indigo); }
+  .ate-item-actions { display: flex; gap: 8px; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-size: 10.5px; font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 100px;
+    letter-spacing: .03em;
+  }
+  .badge-blue  { background: #EEF3FF; color: var(--indigo); }
+  .badge-green { background: var(--green-lt); color: var(--green); }
+  .badge-amber { background: var(--amber-lt); color: var(--amber); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-soft);
+  }
+  .empty-state .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: .5;
+  }
+  .empty-state h3 { font-size: 16px; font-weight: 600; color: var(--text-mid); margin-bottom: 6px; }
+  .empty-state p  { font-size: 13px; color: var(--text-pale); margin-bottom: 20px; }
+
+  /* EXPORT CARD */
+  .export-preview {
+    background: var(--surface);
+    border: 1.5px solid var(--border-lt);
+    border-radius: var(--r-md);
+    padding: 18px;
+    margin-top: 16px;
+  }
+  .export-preview-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-pale);
+    margin-bottom: 10px;
+  }
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(90deg, var(--navy), var(--indigo-lt));
+    color: var(--white);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border-lt);
+    border-radius: var(--r-md);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-card-label { font-size: 11.5px; color: var(--text-soft); font-weight: 500; margin-bottom: 6px; }
+  .stat-card-value { font-size: 28px; font-weight: 700; color: var(--navy); font-family: var(--font-serif); }
+  .stat-card-sub { font-size: 11px; color: var(--text-pale); margin-top: 4px; }
+
+  .divider { border: none; border-top: 1px solid var(--border-lt); margin: 8px 0 20px; }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .topbar { padding: 0 20px; }
+    .page { padding: 20px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-badge">🏫 MEN Colombia</div>
+      <div class="brand-title">Sistema ATE</div>
+      <div class="brand-sub">Actividades Tecnológicas Escolares</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Gestión</div>
+      <button class="nav-item active" onclick="switchPage('crear')">
+        <div class="nav-icon">✏️</div> Crear ATE
+      </button>
+      <button class="nav-item" onclick="switchPage('lista')">
+        <div class="nav-icon">📋</div> Mis ATEs
+      </button>
+      <div class="nav-label">Herramientas</div>
+      <button class="nav-item" onclick="switchPage('exportar')">
+        <div class="nav-icon">📄</div> Exportar PDF
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <p>Sistema ATE v2.0<br>Ministerio de Educación Nacional<br>República de Colombia</p>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Crear nueva ATE</div>
+        <div class="topbar-sub" id="topbar-sub">Complete los 4 pasos para registrar una actividad tecnológica</div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar">D</div>
+      </div>
+    </header>
+
+    <!-- ╔══════════════════╗ -->
+    <!-- ║   PAGE: CREAR    ║ -->
+    <!-- ╚══════════════════╝ -->
+    <div class="page active" id="page-crear">
+      <div class="page-header">
+        <h2>Nueva Actividad Tecnológica Escolar</h2>
+        <p>Complete el formulario en 4 pasos para registrar su ATE de forma correcta</p>
+      </div>
+
+      <div id="toast" class="toast"></div>
+
+      <!-- STEP BAR -->
+      <div class="step-bar" id="stepBar">
+        <div class="step-node">
+          <div class="step-circle curr" id="sc1">1</div>
+          <div class="step-label curr" id="sl1">Información</div>
+        </div>
+        <div class="step-connector" id="sconn1"></div>
+        <div class="step-node">
+          <div class="step-circle" id="sc2">2</div>
+          <div class="step-label" id="sl2">Competencias</div>
+        </div>
+        <div class="step-connector" id="sconn2"></div>
+        <div class="step-node">
+          <div class="step-circle" id="sc3">3</div>
+          <div class="step-label" id="sl3">Rúbrica</div>
+        </div>
+        <div class="step-connector" id="sconn3"></div>
+        <div class="step-node">
+          <div class="step-circle" id="sc4">4</div>
+          <div class="step-label" id="sl4">Secuencia</div>
+        </div>
+      </div>
+
+      <!-- PASO 1 -->
+      <div id="paso-1" class="paso-panel">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📝</div>
+            <div>
+              <div class="card-title">Información general de la ATE</div>
+              <div class="card-desc">Datos básicos de identificación de la actividad</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field-group">
+              <label class="field-label">Nombre de la actividad <span class="req">*</span></label>
+              <input type="text" id="ate-nombre" placeholder="Ej: Construcción de un puente con palitos" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Docente responsable <span class="req">*</span></label>
+              <input type="text" id="ate-docente" placeholder="Nombre completo del profesor/a" />
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="field-group">
+              <label class="field-label">Grado / Nivel</label>
+              <select id="ate-grado">
+                <option value="">Seleccionar...</option>
+                <option>Primaria 1° - 3°</option>
+                <option>Primaria 4° - 5°</option>
+                <option>Secundaria 6° - 7°</option>
+                <option>Secundaria 8° - 9°</option>
+                <option>Media 10° - 11°</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Área de tecnología</label>
+              <select id="ate-area">
+                <option value="">Seleccionar...</option>
+                <option>Tecnología e Informática</option>
+                <option>Robótica</option>
+                <option>Diseño y Manufactura</option>
+                <option>Electrónica</option>
+                <option>Programación</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Duración (sesiones)</label>
+              <input type="number" id="ate-duracion" placeholder="Ej: 3" min="1" max="20" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Descripción general</label>
+            <textarea id="ate-descripcion" placeholder="Describe brevemente de qué trata la actividad y cuál es su propósito principal..."></textarea>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-primary" onclick="irPaso(2)">Siguiente → Competencias</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div id="paso-2" class="paso-panel" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🎯</div>
+            <div>
+              <div class="card-title">Competencias y objetivos de aprendizaje</div>
+              <div class="card-desc">Define qué habilidades tecnológicas desarrollarán los estudiantes</div>
+            </div>
+          </div>
+
+          <div id="competencias-container">
+            <div class="competencia-block" id="comp-0">
+              <div class="competencia-header">
+                <span class="competencia-num">⚡ Competencia 1</span>
+              </div>
+              <div class="grid-2">
+                <div class="field-group">
+                  <label class="field-label">Tipo de competencia</label>
+                  <select class="comp-tipo">
+                    <option>Solución de problemas tecnológicos</option>
+                    <option>Uso de herramientas tecnológicas</option>
+                    <option>Diseño de soluciones</option>
+                    <option>Trabajo colaborativo</option>
+                    <option>Pensamiento computacional</option>
+                    <option>Comunicación tecnológica</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Indicador de logro</label>
+                  <input type="text" class="comp-indicador" placeholder="¿Qué logrará el estudiante?" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-add" onclick="agregarCompetencia()">+ Agregar otra competencia</button>
+
+          <hr class="divider" style="margin-top:20px" />
+          <div class="field-group">
+            <label class="field-label">Recursos necesarios</label>
+            <textarea id="ate-recursos" placeholder="Materiales, herramientas, software, equipos, etc. (uno por línea)"></textarea>
+          </div>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" onclick="irPaso(1)">← Anterior</button>
+            <button class="btn btn-primary" onclick="irPaso(3)">Siguiente → Rúbrica</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div id="paso-3" class="paso-panel" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📊</div>
+            <div>
+              <div class="card-title">Rúbrica de evaluación</div>
+              <div class="card-desc">Establece los criterios y niveles de desempeño para calificar la actividad</div>
+            </div>
+          </div>
+
+          <div class="rubrica-wrapper">
+            <table class="rubrica-table">
+              <thead>
+                <tr>
+                  <th class="rh rh-crit">Criterio</th>
+                  <th class="rh rh-1">🔴 Inicial (1)</th>
+                  <th class="rh rh-2">🟡 En proceso (2)</th>
+                  <th class="rh rh-3">🟢 Satisfactorio (3)</th>
+                  <th class="rh rh-4">🔵 Destacado (4)</th>
+                </tr>
+              </thead>
+              <tbody id="rubrica-container">
+                <tr>
+                  <td><input type="text" placeholder="Criterio 1" /></td>
+                  <td><textarea placeholder="Nivel inicial..."></textarea></td>
+                  <td><textarea placeholder="En proceso..."></textarea></td>
+                  <td><textarea placeholder="Satisfactorio..."></textarea></td>
+                  <td><textarea placeholder="Destacado..."></textarea></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn-add" onclick="agregarCriterio()">+ Agregar criterio de evaluación</button>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" onclick="irPaso(2)">← Anterior</button>
+            <button class="btn btn-primary" onclick="irPaso(4)">Siguiente → Secuencia</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 4 -->
+      <div id="paso-4" class="paso-panel" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">🗂️</div>
+            <div>
+              <div class="card-title">Secuencia didáctica</div>
+              <div class="card-desc">Organiza los momentos y tiempos de la actividad en el aula</div>
+            </div>
+          </div>
+
+          <div id="secuencia-container"></div>
+          <button class="btn-add" onclick="agregarSecuencia()">+ Agregar momento didáctico</button>
+
+          <div class="card-actions">
+            <button class="btn btn-secondary" onclick="irPaso(3)">← Anterior</button>
+            <button class="btn btn-gold" onclick="guardarATE()">💾 Guardar ATE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══════════════════╗ -->
+    <!-- ║   PAGE: LISTA    ║ -->
+    <!-- ╚══════════════════╝ -->
+    <div class="page" id="page-lista">
+      <div class="page-header">
+        <h2>Mis Actividades Tecnológicas</h2>
+        <p>Consulta, gestiona y exporta todas tus ATEs registradas</p>
+      </div>
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card">
+          <div class="stat-card-label">Total de ATEs</div>
+          <div class="stat-card-value" id="stat-total">0</div>
+          <div class="stat-card-sub">actividades registradas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Áreas cubiertas</div>
+          <div class="stat-card-value" id="stat-areas">0</div>
+          <div class="stat-card-sub">disciplinas tecnológicas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Última creación</div>
+          <div class="stat-card-value" id="stat-fecha" style="font-size:18px; padding-top:4px">—</div>
+          <div class="stat-card-sub">fecha de registro</div>
+        </div>
+      </div>
+      <div id="lista-container"></div>
+    </div>
+
+    <!-- ╔══════════════════╗ -->
+    <!-- ║  PAGE: EXPORTAR  ║ -->
+    <!-- ╚══════════════════╝ -->
+    <div class="page" id="page-exportar">
+      <div class="page-header">
+        <h2>Exportar ATE como PDF</h2>
+        <p>Genera un documento profesional listo para imprimir o compartir con tu institución</p>
+      </div>
+      <div class="card">
+        <div class="ai-badge">✦ Generación con Inteligencia Artificial</div>
+        <div class="card-header" style="margin-bottom:0; border:none; padding:0 0 8px;">
+          <div class="card-icon">📄</div>
+          <div>
+            <div class="card-title">Selecciona la ATE a exportar</div>
+            <div class="card-desc">El sistema generará un PDF estructurado con formato oficial</div>
+          </div>
+        </div>
+        <hr class="divider" />
+        <div class="field-group">
+          <label class="field-label">ATE guardada</label>
+          <select id="pdf-selector"><option value="">— Selecciona una ATE guardada —</option></select>
+        </div>
+        <div id="pdf-preview" style="display:none">
+          <div class="export-preview">
+            <div class="export-preview-label">Vista previa del documento</div>
+            <div id="pdf-preview-content" style="font-size:13px; color: var(--text-dark); line-height:1.6;"></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-gold" onclick="generarPDF()">📄 Generar PDF con IA ↗</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+let ates = [];
+try { ates = JSON.parse(localStorage.getItem('ates_data') || '[]'); } catch(e) {}
+let compCount = 1;
+let secCount = 0;
+
+// ── Initial secuencia block ──
+window.addEventListener('DOMContentLoaded', () => {
+  agregarSecuencia();
+  renderLista();
+});
+
+// ── PAGE NAVIGATION ──
+function switchPage(name) {
+  const titles = { crear:'Crear nueva ATE', lista:'Mis ATEs', exportar:'Exportar PDF' };
+  const subs   = { crear:'Complete los 4 pasos para registrar una actividad tecnológica', lista:'Consulta y gestiona todas tus actividades guardadas', exportar:'Genera documentos PDF profesionales con IA' };
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b => {
+    if(b.textContent.trim().toLowerCase().includes(name === 'crear' ? 'crear' : name === 'lista' ? 'mis' : 'exportar'))
+      b.classList.add('active');
+  });
+  document.getElementById('topbar-title').textContent = titles[name];
+  document.getElementById('topbar-sub').textContent   = subs[name];
+  if(name === 'lista') renderLista();
+  if(name === 'exportar') renderPDFSelector();
 }
+
+// ── STEP NAVIGATION ──
+function irPaso(n) {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('paso-'+i).style.display = i === n ? 'block' : 'none';
+    const sc = document.getElementById('sc'+i);
+    const sl = document.getElementById('sl'+i);
+    sc.className = 'step-circle';
+    sl.className = 'step-label';
+    if(i < n)  { sc.classList.add('done'); sl.classList.add('done'); sc.textContent = '✓'; }
+    else if(i===n){ sc.classList.add('curr'); sl.classList.add('curr'); sc.textContent = i; }
+    else { sc.textContent = i; }
+    if(i < 4) {
+      const conn = document.getElementById('sconn'+i);
+      if(conn) conn.classList.toggle('done', i < n);
+    }
+  });
+}
+
+// ── COMPETENCIAS ──
+function agregarCompetencia() {
+  const c = document.getElementById('competencias-container');
+  const div = document.createElement('div');
+  div.className = 'competencia-block';
+  compCount++;
+  div.innerHTML = `<div class="competencia-header">
+    <span class="competencia-num">⚡ Competencia ${compCount}</span>
+    <button class="btn btn-danger" onclick="this.closest('.competencia-block').remove()">Eliminar</button>
+  </div>
+  <div class="grid-2">
+    <div class="field-group"><label class="field-label">Tipo de competencia</label>
+    <select class="comp-tipo">
+      <option>Solución de problemas tecnológicos</option>
+      <option>Uso de herramientas tecnológicas</option>
+      <option>Diseño de soluciones</option>
+      <option>Trabajo colaborativo</option>
+      <option>Pensamiento computacional</option>
+      <option>Comunicación tecnológica</option>
+    </select></div>
+    <div class="field-group"><label class="field-label">Indicador de logro</label>
+    <input type="text" class="comp-indicador" placeholder="¿Qué logrará el estudiante?" /></div>
+  </div>`;
+  c.appendChild(div);
+}
+
+// ── RÚBRICA ──
+function agregarCriterio() {
+  const c = document.getElementById('rubrica-container');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" placeholder="Criterio" /></td>
+    <td><textarea placeholder="Nivel inicial..."></textarea></td>
+    <td><textarea placeholder="En proceso..."></textarea></td>
+    <td><textarea placeholder="Satisfactorio..."></textarea></td>
+    <td><textarea placeholder="Destacado..."></textarea></td>`;
+  c.appendChild(tr);
+}
+
+// ── SECUENCIA ──
+function agregarSecuencia() {
+  secCount++;
+  const c = document.getElementById('secuencia-container');
+  const div = document.createElement('div');
+  div.className = 'secuencia-block';
+  div.innerHTML = `<div class="sec-header">
+    <div class="sec-num">
+      <div class="sec-dot">${secCount}</div>
+      <span class="sec-dot-label">Momento didáctico ${secCount}</span>
+    </div>
+    ${secCount > 1 ? `<button class="btn btn-danger" onclick="this.closest('.secuencia-block').remove()">Eliminar</button>` : ''}
+  </div>
+  <div class="grid-2">
+    <div class="field-group"><label class="field-label">Momento</label>
+    <select class="sec-momento">
+      <option>Inicio / Motivación</option>
+      <option>Exploración / Investigación</option>
+      <option>Diseño / Planeación</option>
+      <option>Construcción / Ejecución</option>
+      <option>Prueba / Evaluación</option>
+      <option>Comunicación / Socialización</option>
+    </select></div>
+    <div class="field-group"><label class="field-label">Tiempo estimado (min)</label>
+    <input type="number" class="sec-tiempo" placeholder="Ej: 20" min="5" /></div>
+  </div>
+  <div class="field-group"><label class="field-label">Descripción de la actividad</label>
+  <textarea class="sec-desc" placeholder="¿Qué harán los estudiantes en este momento?"></textarea></div>`;
+  c.appendChild(div);
+}
+
+// ── GUARDAR ──
+function guardarATE() {
+  const nombre  = document.getElementById('ate-nombre').value.trim();
+  const docente = document.getElementById('ate-docente').value.trim();
+  if(!nombre || !docente) { showToast('⚠ Completa el nombre y docente antes de guardar.', 'warn'); return; }
+
+  const competencias = [];
+  document.querySelectorAll('.competencia-block').forEach(b => {
+    competencias.push({ tipo: b.querySelector('.comp-tipo')?.value||'', indicador: b.querySelector('.comp-indicador')?.value||'' });
+  });
+  const rubrica = [];
+  document.querySelectorAll('#rubrica-container tr').forEach(row => {
+    const cells = row.querySelectorAll('input, textarea');
+    if(cells.length >= 5) rubrica.push({ criterio:cells[0]?.value||'', inicial:cells[1]?.value||'', proceso:cells[2]?.value||'', satisfactorio:cells[3]?.value||'', destacado:cells[4]?.value||'' });
+  });
+  const secuencia = [];
+  document.querySelectorAll('.secuencia-block').forEach(d => {
+    secuencia.push({ momento:d.querySelector('.sec-momento')?.value||'', tiempo:d.querySelector('.sec-tiempo')?.value||'', descripcion:d.querySelector('.sec-desc')?.value||'' });
+  });
+  const ate = {
+    id: Date.now(), nombre, docente,
+    grado: document.getElementById('ate-grado').value,
+    area: document.getElementById('ate-area').value,
+    duracion: document.getElementById('ate-duracion').value,
+    descripcion: document.getElementById('ate-descripcion').value,
+    recursos: document.getElementById('ate-recursos').value,
+    competencias, rubrica, secuencia,
+    fecha: new Date().toLocaleDateString('es-CO')
+  };
+  ates.push(ate);
+  try { localStorage.setItem('ates_data', JSON.stringify(ates)); } catch(e) {}
+  showToast('✓ ATE "' + nombre + '" guardada correctamente.', 'success');
+  setTimeout(() => switchPage('lista'), 1500);
+}
+
+// ── TOAST ──
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success');
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ── LISTA ──
+function renderLista() {
+  const c = document.getElementById('lista-container');
+  // stats
+  const areas = [...new Set(ates.filter(a=>a.area).map(a=>a.area))].length;
+  document.getElementById('stat-total').textContent = ates.length;
+  document.getElementById('stat-areas').textContent = areas;
+  document.getElementById('stat-fecha').textContent = ates.length ? ates[ates.length-1].fecha : '—';
+
+  if(ates.length === 0) {
+    c.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📂</div>
+      <h3>No hay ATEs registradas</h3>
+      <p>Crea tu primera actividad tecnológica<br>para que aparezca aquí.</p>
+      <button class="btn btn-primary" onclick="switchPage('crear')">+ Crear primera ATE</button>
+    </div>`;
+    return;
+  }
+  c.innerHTML = ates.map((a,i) => `
+    <div class="ate-item">
+      <div class="ate-item-icon">🔬</div>
+      <div class="ate-item-body">
+        <div class="ate-item-name">${a.nombre}</div>
+        <div class="ate-item-meta">
+          <span class="meta-chip">👤 ${a.docente}</span>
+          ${a.grado ? `<span class="meta-chip">📚 ${a.grado}</span>` : ''}
+          <span class="meta-chip">🗓 ${a.fecha}</span>
+          ${a.area ? `<span class="meta-chip chip-blue">${a.area}</span>` : ''}
+          <span class="meta-chip">${a.competencias.length} competencias</span>
+        </div>
+      </div>
+      <div class="ate-item-actions">
+        <button class="btn btn-secondary" onclick="exportarATE(${i})" style="font-size:12px;padding:7px 12px">📄 PDF</button>
+        <button class="btn btn-danger" onclick="eliminarATE(${i})">Eliminar</button>
+      </div>
+    </div>`).join('');
+}
+
+function eliminarATE(i) {
+  if(!confirm('¿Eliminar esta ATE? Esta acción no se puede deshacer.')) return;
+  ates.splice(i, 1);
+  try { localStorage.setItem('ates_data', JSON.stringify(ates)); } catch(e) {}
+  renderLista();
+}
+
+// ── EXPORT ──
+function renderPDFSelector() {
+  const sel = document.getElementById('pdf-selector');
+  sel.innerHTML = '<option value="">— Selecciona una ATE guardada —</option>';
+  ates.forEach((a,i) => {
+    sel.innerHTML += `<option value="${i}">${a.nombre} — ${a.docente}</option>`;
+  });
+  sel.onchange = () => {
+    const idx = sel.value;
+    const prev = document.getElementById('pdf-preview');
+    const cont = document.getElementById('pdf-preview-content');
+    if(idx === '') { prev.style.display='none'; return; }
+    const a = ates[idx];
+    prev.style.display = 'block';
+    cont.innerHTML = `<strong style="font-size:15px;color:var(--navy)">${a.nombre}</strong><br>
+      <span style="color:var(--text-soft);font-size:12px">
+        Docente: <b>${a.docente}</b> &nbsp;|&nbsp; Grado: ${a.grado||'—'} &nbsp;|&nbsp; Área: ${a.area||'—'} &nbsp;|&nbsp; Duración: ${a.duracion||'?'} sesiones
+      </span><br><br>
+      ${a.descripcion ? `<span style="color:var(--text-mid)">${a.descripcion.substring(0,160)}${a.descripcion.length>160?'…':''}</span><br><br>` : ''}
+      <span style="color:var(--text-pale);font-size:11px">
+        ${a.competencias.length} competencias &nbsp;·&nbsp; ${a.rubrica.length} criterios de rúbrica &nbsp;·&nbsp; ${a.secuencia.length} momentos didácticos
+      </span>`;
+  };
+}
+
+function exportarATE(i) {
+  renderPDFSelector();
+  switchPage('exportar');
+  setTimeout(() => {
+    const sel = document.getElementById('pdf-selector');
+    sel.value = i;
+    sel.dispatchEvent(new Event('change'));
+  }, 100);
+}
+
+function generarPDF() {
+  const i = document.getElementById('pdf-selector').value;
+  if(i === '') { 
+    showToast('⚠ Selecciona una ATE primero.', 'warn'); 
+    return; 
+  }
+
+  const ate = ates[i];
+
+  function limpiarTexto(valor) {
+    const div = document.createElement('div');
+    div.textContent = valor || '';
+    return div.innerHTML;
+  }
+
+  const competencias = (ate.competencias || []).map(c => `
+    <tr>
+      <td>${limpiarTexto(c.tipo)}</td>
+      <td>${limpiarTexto(c.indicador) || '—'}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="2">No definidas</td></tr>';
+
+  const rubrica = (ate.rubrica || []).map(r => `
+    <tr>
+      <td>${limpiarTexto(r.criterio) || '—'}</td>
+      <td>${limpiarTexto(r.inicial) || '—'}</td>
+      <td>${limpiarTexto(r.proceso) || '—'}</td>
+      <td>${limpiarTexto(r.satisfactorio) || '—'}</td>
+      <td>${limpiarTexto(r.destacado) || '—'}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5">No definida</td></tr>';
+
+  const secuencia = (ate.secuencia || []).map((s, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${limpiarTexto(s.momento)}</td>
+      <td>${limpiarTexto(s.tiempo) || '—'} min</td>
+      <td>${limpiarTexto(s.descripcion) || '—'}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="4">No definida</td></tr>';
+
+  const contenido = document.createElement('div');
+  contenido.innerHTML = `
+    <style>
+      .pdf-doc {
+        font-family: Arial, sans-serif;
+        color: #0D1B3E;
+        padding: 22px;
+        line-height: 1.45;
+      }
+      .pdf-header {
+        text-align: center;
+        border-bottom: 3px solid #0D1B3E;
+        padding-bottom: 14px;
+        margin-bottom: 20px;
+      }
+      .pdf-badge {
+        display: inline-block;
+        background: #D4920C;
+        color: #0D1B3E;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .pdf-doc h1 {
+        font-size: 24px;
+        margin: 6px 0;
+      }
+      .pdf-doc h2 {
+        font-size: 18px;
+        margin: 4px 0;
+        color: #2C4BAA;
+      }
+      .pdf-doc h3 {
+        font-size: 15px;
+        margin: 18px 0 8px;
+        padding: 8px;
+        background: #F2F4F9;
+        border-left: 4px solid #D4920C;
+      }
+      .pdf-doc p {
+        font-size: 12px;
+        color: #3A4A6B;
+      }
+      .pdf-doc {
+        width: 100%;
+        max-width: 100%;
+        page-break-inside: auto;
+      }
+      .pdf-doc table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 12px;
+        page-break-inside: auto;
+      }
+      .pdf-doc tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+      .pdf-doc thead {
+        display: table-header-group;
+      }
+      .pdf-doc tfoot {
+        display: table-footer-group;
+      }
+      .pdf-doc h3 {
+        page-break-after: avoid;
+      }
+      .pdf-doc th {
+        background: #0D1B3E;
+        color: white;
+        padding: 7px;
+        border: 1px solid #D8DDE8;
+        font-size: 10px;
+        text-align: left;
+      }
+      .pdf-doc td {
+        padding: 7px;
+        border: 1px solid #D8DDE8;
+        font-size: 10px;
+        vertical-align: top;
+      }
+      .pdf-footer {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #D8DDE8;
+        text-align: center;
+        font-size: 10px;
+        color: #6B7A9A;
+      }
+    </style>
+
+    <div class="pdf-doc">
+      <div class="pdf-header">
+        <div class="pdf-badge">MEN COLOMBIA · SISTEMA ATE</div>
+        <h1>Actividad Tecnológica Escolar</h1>
+        <h2>${limpiarTexto(ate.nombre)}</h2>
+      </div>
+
+      <h3>1. Información general</h3>
+      <table>
+        <tr><th>Docente responsable</th><td>${limpiarTexto(ate.docente)}</td></tr>
+        <tr><th>Grado / Nivel</th><td>${limpiarTexto(ate.grado) || 'No especificado'}</td></tr>
+        <tr><th>Área de tecnología</th><td>${limpiarTexto(ate.area) || 'No especificada'}</td></tr>
+        <tr><th>Duración</th><td>${limpiarTexto(ate.duracion) || '?'} sesiones</td></tr>
+        <tr><th>Fecha</th><td>${limpiarTexto(ate.fecha) || '—'}</td></tr>
+      </table>
+
+      <h3>2. Descripción general</h3>
+      <p>${limpiarTexto(ate.descripcion) || 'Sin descripción.'}</p>
+
+      <h3>3. Competencias y objetivos de aprendizaje</h3>
+      <table>
+        <thead>
+          <tr><th>Tipo de competencia</th><th>Indicador de logro</th></tr>
+        </thead>
+        <tbody>${competencias}</tbody>
+      </table>
+
+      <h3>4. Recursos necesarios</h3>
+      <p>${limpiarTexto(ate.recursos || 'No especificados').replace(/\n/g, '<br>')}</p>
+
+      <h3>5. Rúbrica de evaluación</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Inicial (1)</th>
+            <th>En proceso (2)</th>
+            <th>Satisfactorio (3)</th>
+            <th>Destacado (4)</th>
+          </tr>
+        </thead>
+        <tbody>${rubrica}</tbody>
+      </table>
+
+      <h3>6. Secuencia didáctica</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Momento</th>
+            <th>Tiempo</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>${secuencia}</tbody>
+      </table>
+
+      <div class="pdf-footer">
+        Documento generado automáticamente por el Sistema ATE.
+      </div>
+    </div>
+  `;
+
+  const nombreArchivo = (ate.nombre || 'ATE').replace(/[\\/:*?"<>|]/g, '_') + '.pdf';
+
+  html2pdf().set({
+    margin: 0.4,
+    filename: nombreArchivo,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+    pagebreak: {
+      mode: ['css', 'legacy'],
+      avoid: ['tr', 'td', 'th', '.pdf-header']
+    }
+  }).from(contenido).save();
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>
+
